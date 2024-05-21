@@ -12,6 +12,11 @@
                 @csrf
 
                 <div class="space-y-2">
+                    <label for="url" class="block text-sm font-medium text-gray-700 dark:text-gray-200">URL</label>
+                    <input type="text" id="url" name="url" placeholder="URL" value="{{ old('url') }}" class="border p-3 w-full rounded-md focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                </div>
+
+                <div class="space-y-2">
                     <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Nom</label>
                     <input type="text" id="name" name="name" placeholder="Nom" value="{{ old('name') }}" class="border p-3 w-full rounded-md focus:border-blue-500 dark:bg-gray-700 dark:text-white">
                 </div>

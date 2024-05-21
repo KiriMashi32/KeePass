@@ -32,6 +32,7 @@ class PasswordController extends Controller
         $password->name = $request->input('name');
         $password->username = $request->input('username');
         $password->password = Crypt::encryptString($request->input('password'));
+        $password->url = $request->input('url');
         $password->user_id = auth()->user()->id;
         $password->save();
         return redirect('/keepass');

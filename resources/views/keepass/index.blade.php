@@ -19,6 +19,8 @@
                     <th class="border text-white">Nom</th>
                     <th class="border text-white">Nom d'utilisateur</th>
                     <th class="border text-white">Mot de passe</th>
+                    <th class="border text-white">URL</th>
+                    <th class="border text-white">Dernière modification</th>
                 </tr>
             </thead>
             <tbody>
@@ -39,6 +41,19 @@
                                 Copier
                             </button>
                         </td>
+
+                        <td class="border text-white exclude-from-search">
+                            <a href="{{ $password->url }}" target="_blank">{{ $password->url }}</a>
+
+                            <button onclick="navigator.clipboard.writeText('{{ $password->url }}')" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded">
+                                Copier
+                            </button>
+                        </td>
+
+                        <td class="border text-white exclude-from-search">
+                            {{ $password->updated_at->format('d-m-Y H:i') }}
+                        </td>
+
                         <td class="border exclude-from-search">
                             <a href="{{ route('keepass.edit', $password->id) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                 Modifier
