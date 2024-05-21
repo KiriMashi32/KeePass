@@ -12,67 +12,65 @@
 
         <input type="text" id="searchInput" placeholder="Rechercher" class="border p-2 rounded mt-4 w-full">
 
-
-        <table class="w-full mt-4 border">
-            <thead>
-                <tr>
-                    <th class="border text-white">Nom</th>
-                    <th class="border text-white">Nom d'utilisateur</th>
-                    <th class="border text-white">Mot de passe</th>
-                    <th class="border text-white">URL</th>
-                    <th class="border text-white">Dernière modification</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($passwords as $password)
+        <div class="overflow-x-auto">
+            <table class="w-full mt-4 border">
+                <thead>
                     <tr>
-                        <td class="border text-white">{{$password->name}}</td>
-                        <td class="border text-white">{{$password->username}}</td>
-                        <!-- Ajouter la classe spécifique à exclure de la recherche -->
-                        <td class="border text-white exclude-from-search">
-                            <span id="password-{{$password->id}}-hidden">{{ str_repeat('•', min(8, strlen(Crypt::decryptString($password->password)))) }}</span>
-                            <span id="password-{{$password->id}}-visible" style="display: none;">{{ Crypt::decryptString($password->password) }}</span>
-
-                            <button onclick="togglePasswordVisibility({{$password->id}})" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
-                                Afficher
-                            </button>
-
-                            <button onclick="copyPassword({{$password->id}})" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded">
-                                Copier
-                            </button>
-                        </td>
-
-                        <td class="border text-white exclude-from-search">
-                            <a href="{{ $password->url }}" target="_blank">{{ $password->url }}</a>
-
-                            <button onclick="navigator.clipboard.writeText('{{ $password->url }}')" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded">
-                                Copier
-                            </button>
-                        </td>
-
-                        <td class="border text-white exclude-from-search">
-                            {{ $password->updated_at->format('d-m-Y H:i') }}
-                        </td>
-
-                        <td class="border exclude-from-search">
-                            <a href="{{ route('keepass.edit', $password->id) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                Modifier
-                            </a>
-                        </td>
-                        <td class="border exclude-from-search">
-                            <form action="{{ route('keepass.destroy', $password->id) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                                    Supprimer
-                                </button>
-                            </form>
-                        </td>
+                        <th class="border text-white p-2">Nom</th>
+                        <th class="border text-white p-2">Nom d'utilisateur</th>
+                        <th class="border text-white p-2">Mot de passe</th>
+                        <th class="border text-white p-2">URL</th>
+                        <th class="border text-white p-2">Dernière modification</th>
+                        <th class="border text-white p-2">Actions</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach ($passwords as $password)
+                        <tr>
+                            <td class="border text-white p-2 max-w-xs truncate">{{$password->name}}</td>
+                            <td class="border text-white p-2 max-w-xs truncate">{{$password->username}}</td>
+                            <td class="border text-white p-2 max-w-xs truncate exclude-from-search">
+                                <span id="password-{{$password->id}}-hidden">{{ str_repeat('•', min(8, strlen(Crypt::decryptString($password->password)))) }}</span>
+                                <span id="password-{{$password->id}}-visible" style="display: none;">{{ Crypt::decryptString($password->password) }}</span>
+                                <button onclick="togglePasswordVisibility({{$password->id}})" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
+                                    Afficher
+                                </button>
+                                <button onclick="copyPassword({{$password->id}})" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded">
+                                    Copier
+                                </button>
+                            </td>
+                            <td class="border text-white p-2 max-w-xs truncate exclude-from-search">
+                                <a href="{{ $password->url }}" target="_blank">{{ $password->url }}</a><br>
+                                <button onclick="navigator.clipboard.writeText('{{ $password->url }}')" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded">
+                                    Copier
+                                </button>
+                            </td>
+                            <td class="border text-white p-2 max-w-xs truncate exclude-from-search">
+                                {{ $password->updated_at->translatedFormat('d F Y H:i') }}
+
+                            </td>
+                            <td class="border text-white p-2 flex space-x-2">
+                                <a href="{{ route('keepass.history', $password->id) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                    Historique
+                                </a>
+                                <a href="{{ route('keepass.edit', $password->id) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                    Modifier
+                                </a>
+                                <form action="{{ route('keepass.destroy', $password->id) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                                        Supprimer
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
+
 </x-app-layout>
 
 <script>
@@ -92,7 +90,6 @@
     function copyPassword(passwordId) {
         const passwordText = document.getElementById(`password-${passwordId}-visible`).innerText;
 
-        // Créer un élément de texte temporaire pour copier le mot de passe
         const tempInput = document.createElement('input');
         tempInput.value = passwordText;
         document.body.appendChild(tempInput);
@@ -100,7 +97,6 @@
         document.execCommand('copy');
         document.body.removeChild(tempInput);
 
-        // Vous pouvez ajouter une notification ou un message pour confirmer que le mot de passe a été copié
         alert('Mot de passe copié !');
 
         setTimeout(() => {
@@ -109,15 +105,13 @@
     }
 
     function clearClipboard() {
-        // Créer un élément de texte temporaire pour vider le presse-papiers
         const tempInput = document.createElement('input');
-        tempInput.style.opacity = '0'; // Rendre l'élément invisible
+        tempInput.style.opacity = '0';
         document.body.appendChild(tempInput);
         tempInput.select();
         document.execCommand('copy');
         document.body.removeChild(tempInput);
 
-        // Vous pouvez également informer l'utilisateur que le presse-papiers a été vidé
         console.log('Presse-papiers vidé après 15 secondes.');
     }
 
@@ -128,7 +122,6 @@
         const searchString = event.target.value.toLowerCase();
 
         rows.forEach(row => {
-            // Exclure les lignes contenant la classe "exclude-from-search"
             if (!row.classList.contains("exclude-from-search")) {
                 const text = row.innerText.toLowerCase();
                 if (text.indexOf(searchString) !== -1) {

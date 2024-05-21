@@ -34,6 +34,7 @@ Route::get('/passwords', [PasswordController::class, 'index'])->name('keepass');
 Route::resource('keepass', PasswordController::class)->except(['edit', 'destroy']);
 Route::get('/keepass/{keepass}/edit', [PasswordController::class, 'edit'])->name('keepass.edit');
 Route::delete('/keepass/{keepass}', [PasswordController::class, 'destroy'])->name('keepass.destroy');
+Route::get('/passwords/{id}/history', [App\Http\Controllers\PasswordController::class, 'history'])->name('keepass.history');
 
 
 

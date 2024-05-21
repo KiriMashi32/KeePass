@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Crypt;
+use App\Models\PasswordHistory;
 
 class PasswordController extends Controller
 {
@@ -21,11 +22,11 @@ class PasswordController extends Controller
         return view('keepass.show', compact('password', 'decryptedPassword'));
     }
 
-
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required',
+            'password' => 'required', // Assure que le mot de passe est fourni
         ]);
 
         $password = new Password();
@@ -50,24 +51,40 @@ class PasswordController extends Controller
         return view('keepass.edit', compact('password', 'decryptedPassword'));
     }
 
-
     public function update(Request $request, $id)
     {
         $password = Password::find($id);
+
+        // Stocker l'ancien mot de passe avant de le modifier
+        $oldPassword = Crypt::decryptString($password->password);
 
         $password->name = $request->input('name');
         $password->username = $request->input('username');
         $password->password = Crypt::encryptString($request->input('password')); // Crypter le nouveau mot de passe
         $password->save();
 
+        PasswordHistory::create([
+            'password_id' => $password->id,
+            'old_password' => Crypt::encryptString($oldPassword), // Crypter l'ancien mot de passe
+            'new_password' => Crypt::encryptString($request->input('password')), // Crypter le nouveau mot de passe
+            'changed_at' => now(),
+        ]);
+
         return redirect('/keepass');
     }
-
 
     public function destroy($id)
     {
         $password = Password::find($id);
         $password->delete();
         return redirect('/keepass');
+    }
+
+    public function history($id)
+    {
+        $password = Password::find($id);
+        $history = $password->passwordHistories;
+
+        return view('keepass.history', ['history' => $history]);
     }
 }

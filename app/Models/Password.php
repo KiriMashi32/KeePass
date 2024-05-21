@@ -13,4 +13,9 @@ class Password extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function passwordHistories()
+    {
+        return $this->hasMany(PasswordHistory::class);
+    }
 }
