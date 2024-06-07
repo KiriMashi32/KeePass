@@ -60,13 +60,13 @@ class PasswordController extends Controller
 
         $password->name = $request->input('name');
         $password->username = $request->input('username');
-        $password->password = Crypt::encryptString($request->input('password')); // Crypter le nouveau mot de passe
+        $password->password = Crypt::encryptString($request->input('password'));
         $password->save();
 
         PasswordHistory::create([
             'password_id' => $password->id,
-            'old_password' => Crypt::encryptString($oldPassword), // Crypter l'ancien mot de passe
-            'new_password' => Crypt::encryptString($request->input('password')), // Crypter le nouveau mot de passe
+            'old_password' => Crypt::encryptString($oldPassword),
+            'new_password' => Crypt::encryptString($request->input('password')),
             'changed_at' => now(),
         ]);
 
